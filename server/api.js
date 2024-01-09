@@ -4,6 +4,7 @@ import { signup, login } from "./controllers/signup.js";
 import auth from "./utils/auth.js";
 import { createBooking } from "./controllers/booking.js";
 import { viewBookings } from "./controllers/viewBookings.js";
+import { cancelBooking } from "./controllers/cancelBooking.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/bookings", auth, createBooking);
 router.get("/bookings", auth, viewBookings);
+router.delete("/bookings/:bookingId", auth, cancelBooking);
 
 export default router;
