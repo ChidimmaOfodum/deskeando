@@ -8,7 +8,6 @@ import { formatDate, formatTime } from "./validators.js";
  * @returns {string|null} - The desk ID if found, otherwise null.
  */
 const getDeskId = async (deskName) => {
-	console.log("deskName", deskName);
 	try {
 		const result = await db.query(
 			"SELECT desk_id FROM public.desks WHERE desk_name = $1",
@@ -135,6 +134,24 @@ export const getUserBookings = async (userId) => {
 		reservationDate: formatDate(booking.reservation_date),
 		reservationTime: formatTime(booking.reservation_date),
 	}));
+};
+
+// desks status
+export const getDeskStatus = async (date) => {
+	try {
+		const deskStatusResult = await db.query(
+			`
+			SELECT d.*,
+			CASE WHEN b.booking_id IS NULL THEN 'Open' ELSE 'Closed' END AS status
+			FROM desks d
+			LEFT JOIN bookings b ON d.desk_id = b.desk_id AND b.reservation_date = $1
+			`,
+			[date]
+		);
+		return deskStatusResult.rows;
+	} catch (error) {
+		console.error({ error: "Unable to retrieve desk status" });
+	}
 };
 
 export { checkAvailability, saveBooking };
